@@ -15,6 +15,12 @@ class HtmlServiceProvider extends ServiceProvider
         $this->app->singleton('form', function ($app) {
             return new FormBuilder();
         });
+
+        $this->app->booting(function() {
+            if (!class_exists('Form')) {
+                class_alias(\Souravmsh\Html\Facades\Form::class, 'Form');
+            }
+        });
     }
 
     /**
