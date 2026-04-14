@@ -137,6 +137,16 @@ You may pass an array (or a collection) into the select method:
 {!! Form::button('Click Me', ['class' => 'btn btn-secondary', 'type' => 'button']) !!}
 ```
 
+## Helper Functions
+
+In addition to the `Form` facade, this package also provides a `form()` global helper function. This is especially useful if you prefer function-based syntax over static facade method calls.
+
+```blade
+{!! form()->open(['url' => 'foo/bar']) !!}
+    {!! form()->text('name', null, ['class' => 'form-control']) !!}
+{!! form()->close() !!}
+```
+
 ## Extending / Macros
 
 Since the underlying `FormBuilder` uses the `Macroable` trait, you can easily register your own custom methods:
