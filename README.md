@@ -140,14 +140,51 @@ You may pass an array (or a collection) into the select method:
 {!! Form::button('Click Me', ['class' => 'btn btn-secondary', 'type' => 'button']) !!}
 ```
 
+## HTML Builder
+
+The package also provides a drop-in replacement for the legacy `Html` facade:
+
+### Scripts & Styles
+```blade
+{!! Html::script('js/app.js') !!}
+{!! Html::style('css/app.css') !!}
+{!! Html::favicon('favicon.ico') !!}
+```
+
+### Images
+```blade
+{!! Html::image('img/picture.jpg', 'Alternative text', ['class' => 'thumbnail']) !!}
+```
+
+### Links
+```blade
+{!! Html::link('user/profile', 'Profile') !!}
+{!! Html::secureLink('user/profile', 'Profile') !!}
+{!! Html::linkRoute('route.name', 'Title', ['id' => 1]) !!}
+{!! Html::linkAction('HomeController@index', 'Home') !!}
+{!! Html::linkAsset('img/picture.jpg', 'View Asset') !!}
+{!! Html::mailto('example@example.com', 'Send Email') !!}
+```
+
+### Lists & Tags
+```blade
+{!! Html::ul(['Item 1', 'Item 2', 'Nested' => ['Item 2.1']]) !!}
+{!! Html::ol(['Step 1', 'Step 2']) !!}
+{!! Html::dl(['Key' => 'Value']) !!}
+{!! Html::tag('span', 'Content', ['class' => 'badge']) !!}
+{!! Html::meta('description', 'Website description') !!}
+```
+
 ## Helper Functions
 
-In addition to the `Form` facade, this package also provides a `form()` global helper function. This is especially useful if you prefer function-based syntax over static facade method calls.
+In addition to the `Form` and `Html` facades, this package provides global `form()` and `html()` helper functions:
 
 ```blade
 {!! form()->open(['url' => 'foo/bar']) !!}
     {!! form()->text('name', null, ['class' => 'form-control']) !!}
 {!! form()->close() !!}
+
+{!! html()->image('img/logo.png') !!}
 ```
 
 ## Extending / Macros

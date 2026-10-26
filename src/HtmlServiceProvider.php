@@ -4,6 +4,7 @@ namespace Souravmsh\Html;
 
 use Illuminate\Support\ServiceProvider;
 use Souravmsh\Html\Services\FormBuilder;
+use Souravmsh\Html\Services\HtmlBuilder;
 
 class HtmlServiceProvider extends ServiceProvider
 {
@@ -16,9 +17,17 @@ class HtmlServiceProvider extends ServiceProvider
             return new FormBuilder();
         });
 
+        $this->app->singleton('html', function ($app) {
+            return new HtmlBuilder();
+        });
+
         $this->app->booting(function() {
             if (!class_exists('Form')) {
                 class_alias(\Souravmsh\Html\Facades\Form::class, 'Form');
+            }
+
+            if (!class_exists('Html')) {
+                class_alias(\Souravmsh\Html\Facades\Html::class, 'Html');
             }
         });
     }

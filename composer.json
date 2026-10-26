@@ -39,7 +39,8 @@
                 "Souravmsh\\Html\\HtmlServiceProvider"
             ],
             "aliases": {
-                "Form": "Souravmsh\\Html\\Facades\\Form"
+                "Form": "Souravmsh\\Html\\Facades\\Form",
+                "Html": "Souravmsh\\Html\\Facades\\Html"
             }
         }
     },
