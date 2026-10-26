@@ -13,7 +13,7 @@ This presented a significant upgrade hurdle: legacy codebases with hundreds of f
 ## Features
 
 - Seamless drop-in replacement for legacy syntax
-- Compatible with Laravel 10.x, 11.x, 12.x and 13.x
+- Compatible with Laravel 10.x, 11.x, 12.x, 13.x, 14.x and higher
 - Automatic CSRF Token injection
 - Automatic method spoofing (`PUT`, `PATCH`, `DELETE`)
 - Form Model Binding (including nested `dot.notation` elements)

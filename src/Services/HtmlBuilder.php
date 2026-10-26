@@ -7,7 +7,7 @@ use Illuminate\Support\Traits\Macroable;
 
 /**
  * Drop-in replacement for laravelcollective/html Html facade.
- * Supports Laravel 10, 11, and 12 without any blade template changes.
+ * Supports modern Laravel (10.x, 11.x, 12.x, 13.x, 14.x+) without any blade template changes.
  */
 class HtmlBuilder
 {
