@@ -2,6 +2,7 @@
 
 namespace Souravmsh\Html\Services;
 
+use DateTimeInterface;
 use Illuminate\Support\HtmlString;
 use Illuminate\Support\Traits\Macroable;
 
@@ -135,7 +136,47 @@ class FormBuilder
      */
     public function date(string $name, mixed $value = null, array $attributes = []): HtmlString
     {
+        if ($value instanceof DateTimeInterface) {
+            $value = $value->format('Y-m-d');
+        }
+
         return $this->input('date', $name, $value, $attributes);
+    }
+
+    /**
+     * Create a datetime input.
+     */
+    public function datetime(string $name, mixed $value = null, array $attributes = []): HtmlString
+    {
+        if ($value instanceof DateTimeInterface) {
+            $value = $value->format(DateTimeInterface::RFC3339);
+        }
+
+        return $this->input('datetime', $name, $value, $attributes);
+    }
+
+    /**
+     * Create a datetime-local input.
+     */
+    public function datetimeLocal(string $name, mixed $value = null, array $attributes = []): HtmlString
+    {
+        if ($value instanceof DateTimeInterface) {
+            $value = $value->format('Y-m-d\TH:i');
+        }
+
+        return $this->input('datetime-local', $name, $value, $attributes);
+    }
+
+    /**
+     * Create a time input.
+     */
+    public function time(string $name, mixed $value = null, array $attributes = []): HtmlString
+    {
+        if ($value instanceof DateTimeInterface) {
+            $value = $value->format('H:i');
+        }
+
+        return $this->input('time', $name, $value, $attributes);
     }
 
     /**
@@ -190,7 +231,17 @@ class FormBuilder
 
         // Resolve value: explicit → old() → model binding
         if ($value === null && $type !== 'password') {
-            $value = $this->getValueFromModel($name) ?? old($name);
+            $value = old($name, $this->getValueFromModel($name));
+        }
+
+        if ($value instanceof DateTimeInterface) {
+            $value = match ($type) {
+                'date'           => $value->format('Y-m-d'),
+                'datetime-local' => $value->format('Y-m-d\TH:i'),
+                'time'           => $value->format('H:i'),
+                'datetime'       => $value->format(DateTimeInterface::RFC3339),
+                default          => method_exists($value, '__toString') ? (string) $value : $value->format('Y-m-d H:i:s'),
+            };
         }
 
         $attrs = array_merge([
@@ -215,7 +266,7 @@ class FormBuilder
         $id = $attributes['id'] ?? $name;
 
         if ($value === null) {
-            $value = $this->getValueFromModel($name) ?? old($name);
+            $value = old($name, $this->getValueFromModel($name));
         }
 
         $attrs = array_merge([
@@ -248,7 +299,7 @@ class FormBuilder
         $id = $attributes['id'] ?? $name;
 
         if ($selected === null) {
-            $selected = $this->getValueFromModel($name) ?? old($name);
+            $selected = old($name, $this->getValueFromModel($name));
         }
 
         $attrs = array_merge(['name' => $name, 'id' => $id], $attributes);

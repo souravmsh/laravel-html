@@ -95,6 +95,9 @@ You can populate forms automatically using model binding. It automatically gets 
 ```blade
 {!! Form::number('age', null, ['class' => 'form-control']) !!}
 {!! Form::date('birthdate', null, ['class' => 'form-control']) !!}
+{!! Form::datetime('event_at', null, ['class' => 'form-control']) !!}
+{!! Form::datetimeLocal('appointment', null, ['class' => 'form-control']) !!}
+{!! Form::time('start_time', null, ['class' => 'form-control']) !!}
 {!! Form::url('website_url', null, ['class' => 'form-control']) !!}
 {!! Form::hidden('invisible', 'secret') !!}
 ```

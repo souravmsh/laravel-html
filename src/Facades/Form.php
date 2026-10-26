@@ -14,6 +14,10 @@ use Illuminate\Support\Facades\Facade;
  * @method static \Illuminate\Support\HtmlString password(string $name, array $attributes = [])
  * @method static \Illuminate\Support\HtmlString number(string $name, mixed $value = null, array $attributes = [])
  * @method static \Illuminate\Support\HtmlString date(string $name, mixed $value = null, array $attributes = [])
+ * @method static \Illuminate\Support\HtmlString datetime(string $name, mixed $value = null, array $attributes = [])
+ * @method static \Illuminate\Support\HtmlString datetimeLocal(string $name, mixed $value = null, array $attributes = [])
+ * @method static \Illuminate\Support\HtmlString time(string $name, mixed $value = null, array $attributes = [])
+ * @method static \Illuminate\Support\HtmlString url(string $name, mixed $value = null, array $attributes = [])
  * @method static \Illuminate\Support\HtmlString hidden(string $name, mixed $value = null, array $attributes = [])
  * @method static \Illuminate\Support\HtmlString file(string $name, array $attributes = [])
  * @method static \Illuminate\Support\HtmlString textarea(string $name, mixed $value = null, array $attributes = [])
@@ -24,7 +28,7 @@ use Illuminate\Support\Facades\Facade;
  * @method static \Illuminate\Support\HtmlString submit(?string $value = null, array $attributes = [])
  * @method static \Illuminate\Support\HtmlString input(string $type, string $name, mixed $value = null, array $attributes = [])
  *
- * @see \Souravmsh\Html\FormBuilder
+ * @see \Souravmsh\Html\Services\FormBuilder
  */
 class Form extends Facade
 {
