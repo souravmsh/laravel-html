@@ -45,7 +45,7 @@ class HtmlBuilder
      */
     public function script(string $url, array $attributes = [], ?bool $secure = null): HtmlString
     {
-        $attributes['src'] = asset($url, $secure);
+        $attributes = array_merge(['src' => asset($url, $secure)], $attributes);
 
         return new HtmlString('<script' . $this->attributes($attributes) . '></script>');
     }
@@ -61,8 +61,7 @@ class HtmlBuilder
     public function style(string $url, array $attributes = [], ?bool $secure = null): HtmlString
     {
         $defaults = ['media' => 'all', 'type' => 'text/css', 'rel' => 'stylesheet'];
-        $attributes = array_merge($defaults, $attributes);
-        $attributes['href'] = asset($url, $secure);
+        $attributes = array_merge($defaults, $attributes, ['href' => asset($url, $secure)]);
 
         return new HtmlString('<link' . $this->attributes($attributes) . '>');
     }
@@ -78,11 +77,12 @@ class HtmlBuilder
      */
     public function image(string $url, ?string $alt = null, array $attributes = [], ?bool $secure = null): HtmlString
     {
+        $defaults = ['src' => asset($url, $secure)];
         if ($alt !== null) {
-            $attributes['alt'] = $alt;
+            $defaults['alt'] = $alt;
         }
 
-        $attributes['src'] = asset($url, $secure);
+        $attributes = array_merge($defaults, $attributes);
 
         return new HtmlString('<img' . $this->attributes($attributes) . '>');
     }
@@ -97,9 +97,8 @@ class HtmlBuilder
      */
     public function favicon(string $url, array $attributes = [], ?bool $secure = null): HtmlString
     {
-        $defaults = ['rel' => 'shortcut icon', 'type' => 'image/x-icon'];
+        $defaults = ['rel' => 'shortcut icon', 'type' => 'image/x-icon', 'href' => asset($url, $secure)];
         $attributes = array_merge($defaults, $attributes);
-        $attributes['href'] = asset($url, $secure);
 
         return new HtmlString('<link' . $this->attributes($attributes) . '>');
     }
