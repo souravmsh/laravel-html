@@ -90,6 +90,10 @@ if (class_exists(\Illuminate\Container\Container::class)) {
     $container->singleton('html', function () {
         return new \Souravmsh\Html\Services\HtmlBuilder();
     });
+
+    if (class_exists(\Illuminate\Support\Facades\Facade::class)) {
+        \Illuminate\Support\Facades\Facade::setFacadeApplication($container);
+    }
 }
 
 // Fallback helper mocks for tests if not provided by Laravel
@@ -134,10 +138,12 @@ require_once __DIR__ . '/../src/helpers.php';
 
 // Require test classes
 require_once __DIR__ . '/TestCase.php';
+require_once __DIR__ . '/FormBuilderTest.php';
 require_once __DIR__ . '/FormBuilderDateTest.php';
 require_once __DIR__ . '/HtmlBuilderTest.php';
 
 $testClasses = [
+    \Tests\FormBuilderTest::class,
     \Tests\FormBuilderDateTest::class,
     \Tests\HtmlBuilderTest::class,
 ];

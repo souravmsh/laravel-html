@@ -20,6 +20,9 @@ class FormBuilder
     /** @var array Labels for fields (used for accessibility) */
     protected array $labels = [];
 
+    /** @var array Input types that should not auto-fill values from old input or model */
+    protected array $skipValueTypes = ['file', 'password', 'checkbox', 'radio'];
+
     // -------------------------------------------------------------------------
     // Form open / close
     // -------------------------------------------------------------------------
@@ -91,10 +94,10 @@ class FormBuilder
     /**
      * Create a label element.
      */
-    public function label(string $name, ?string $value = null, array $attributes = []): HtmlString
+    public function label(string $name, ?string $value = null, mixed $attributes = []): HtmlString
     {
         $this->labels[] = $name;
-        $attrs = array_merge(['for' => $name], $attributes);
+        $attrs = array_merge(['for' => $name], is_array($attributes) ? $attributes : []);
         $text  = e($value ?? ucwords(str_replace(['-', '_'], ' ', $name)));
         return new HtmlString('<label' . $this->attributesToString($attrs) . '>' . $text . '</label>');
     }
@@ -102,7 +105,7 @@ class FormBuilder
     /**
      * Create a text input.
      */
-    public function text(string $name, mixed $value = null, array $attributes = []): HtmlString
+    public function text(string $name, mixed $value = null, mixed $attributes = []): HtmlString
     {
         return $this->input('text', $name, $value, $attributes);
     }
@@ -110,7 +113,7 @@ class FormBuilder
     /**
      * Create an email input.
      */
-    public function email(string $name, mixed $value = null, array $attributes = []): HtmlString
+    public function email(string $name, mixed $value = null, mixed $attributes = []): HtmlString
     {
         return $this->input('email', $name, $value, $attributes);
     }
@@ -118,15 +121,27 @@ class FormBuilder
     /**
      * Create a password input (never pre-fills value).
      */
-    public function password(string $name, array $attributes = []): HtmlString
+    public function password(string $name, mixed $attributes = []): HtmlString
     {
+        $args = func_get_args();
+
+        // If called with 3 arguments like Form::password('password', null, [...]),
+        // ignore the 2nd argument (value) and use the 3rd argument as attributes.
+        if (count($args) >= 3) {
+            $attributes = is_array($args[2]) ? $args[2] : [];
+        } else {
+            $attributes = is_array($attributes) ? $attributes : [];
+        }
+
+        unset($attributes['value']);
+
         return $this->input('password', $name, null, $attributes);
     }
 
     /**
      * Create a number input.
      */
-    public function number(string $name, mixed $value = null, array $attributes = []): HtmlString
+    public function number(string $name, mixed $value = null, mixed $attributes = []): HtmlString
     {
         return $this->input('number', $name, $value, $attributes);
     }
@@ -134,7 +149,7 @@ class FormBuilder
     /**
      * Create a date input.
      */
-    public function date(string $name, mixed $value = null, array $attributes = []): HtmlString
+    public function date(string $name, mixed $value = null, mixed $attributes = []): HtmlString
     {
         if ($value instanceof DateTimeInterface) {
             $value = $value->format('Y-m-d');
@@ -146,7 +161,7 @@ class FormBuilder
     /**
      * Create a datetime input.
      */
-    public function datetime(string $name, mixed $value = null, array $attributes = []): HtmlString
+    public function datetime(string $name, mixed $value = null, mixed $attributes = []): HtmlString
     {
         if ($value instanceof DateTimeInterface) {
             $value = $value->format(DateTimeInterface::RFC3339);
@@ -158,7 +173,7 @@ class FormBuilder
     /**
      * Create a datetime-local input.
      */
-    public function datetimeLocal(string $name, mixed $value = null, array $attributes = []): HtmlString
+    public function datetimeLocal(string $name, mixed $value = null, mixed $attributes = []): HtmlString
     {
         if ($value instanceof DateTimeInterface) {
             $value = $value->format('Y-m-d\TH:i');
@@ -170,7 +185,7 @@ class FormBuilder
     /**
      * Create a time input.
      */
-    public function time(string $name, mixed $value = null, array $attributes = []): HtmlString
+    public function time(string $name, mixed $value = null, mixed $attributes = []): HtmlString
     {
         if ($value instanceof DateTimeInterface) {
             $value = $value->format('H:i');
@@ -182,7 +197,7 @@ class FormBuilder
     /**
      * Create a url input.
      */
-    public function url(string $name, mixed $value = null, array $attributes = []): HtmlString
+    public function url(string $name, mixed $value = null, mixed $attributes = []): HtmlString
     {
         return $this->input('url', $name, $value, $attributes);
     }
@@ -190,7 +205,7 @@ class FormBuilder
     /**
      * Create a hidden input.
      */
-    public function hidden(string $name, mixed $value = null, array $attributes = []): HtmlString
+    public function hidden(string $name, mixed $value = null, mixed $attributes = []): HtmlString
     {
         return $this->input('hidden', $name, $value, $attributes);
     }
@@ -198,25 +213,38 @@ class FormBuilder
     /**
      * Create a file input.
      */
-    public function file(string $name, array $attributes = []): HtmlString
+    public function file(string $name, mixed $attributes = []): HtmlString
     {
+        $args = func_get_args();
+
+        // When someone calls with 3 arguments like Form::file('file', null, ['class' => ...]),
+        // ignore the 2nd argument (value) and use the 3rd argument as attributes.
+        if (count($args) >= 3) {
+            $attributes = is_array($args[2]) ? $args[2] : [];
+        } else {
+            // Standard call: Form::file('file', ['class' => ...]) or Form::file('file', null)
+            $attributes = is_array($attributes) ? $attributes : [];
+        }
+
+        unset($attributes['value']);
+
         return $this->input('file', $name, null, $attributes);
     }
 
     /**
      * Create a submit input.
      */
-    public function submit(?string $value = null, array $attributes = []): HtmlString
+    public function submit(?string $value = null, mixed $attributes = []): HtmlString
     {
-        return $this->input('submit', '', $value, $attributes);
+        return $this->input('submit', '', $value, is_array($attributes) ? $attributes : []);
     }
 
     /**
      * Create a button element.
      */
-    public function button(?string $value = null, array $attributes = []): HtmlString
+    public function button(?string $value = null, mixed $attributes = []): HtmlString
     {
-        $attrs = array_merge(['type' => 'button'], $attributes);
+        $attrs = array_merge(['type' => 'button'], is_array($attributes) ? $attributes : []);
         return new HtmlString(
             '<button' . $this->attributesToString($attrs) . '>' . $value . '</button>'
         );
@@ -225,13 +253,20 @@ class FormBuilder
     /**
      * Create a generic input element.
      */
-    public function input(string $type, string $name, mixed $value = null, array $attributes = []): HtmlString
+    public function input(string $type, string $name, mixed $value = null, mixed $attributes = []): HtmlString
     {
+        $attributes = is_array($attributes) ? $attributes : [];
         $id = $attributes['id'] ?? $name;
 
-        // Resolve value: explicit → old() → model binding
-        if ($value === null && $type !== 'password') {
+        // Resolve value: explicit → old() → model binding (skip non-value types)
+        if ($value === null && !in_array($type, $this->skipValueTypes, true)) {
             $value = old($name, $this->getValueFromModel($name));
+        }
+
+        // File inputs must never output a value attribute
+        if ($type === 'file') {
+            $value = null;
+            unset($attributes['value']);
         }
 
         if ($value instanceof DateTimeInterface) {
@@ -261,8 +296,9 @@ class FormBuilder
     /**
      * Create a textarea element.
      */
-    public function textarea(string $name, mixed $value = null, array $attributes = []): HtmlString
+    public function textarea(string $name, mixed $value = null, mixed $attributes = []): HtmlString
     {
+        $attributes = is_array($attributes) ? $attributes : [];
         $id = $attributes['id'] ?? $name;
 
         if ($value === null) {
@@ -291,11 +327,12 @@ class FormBuilder
      * @param string $name
      * @param array|\Illuminate\Support\Collection $list
      * @param mixed $selected
-     * @param array $attributes
+     * @param mixed $attributes
      * @return HtmlString
      */
-    public function select(string $name, mixed $list = [], mixed $selected = null, array $attributes = []): HtmlString
+    public function select(string $name, mixed $list = [], mixed $selected = null, mixed $attributes = []): HtmlString
     {
+        $attributes = is_array($attributes) ? $attributes : [];
         $id = $attributes['id'] ?? $name;
 
         if ($selected === null) {
@@ -341,7 +378,7 @@ class FormBuilder
     /**
      * Create a checkbox input.
      */
-    public function checkbox(string $name, mixed $value = 1, ?bool $checked = null, array $attributes = []): HtmlString
+    public function checkbox(string $name, mixed $value = 1, ?bool $checked = null, mixed $attributes = []): HtmlString
     {
         return $this->checkable('checkbox', $name, $value, $checked, $attributes);
     }
@@ -349,7 +386,7 @@ class FormBuilder
     /**
      * Create a radio input.
      */
-    public function radio(string $name, mixed $value = null, ?bool $checked = null, array $attributes = []): HtmlString
+    public function radio(string $name, mixed $value = null, ?bool $checked = null, mixed $attributes = []): HtmlString
     {
         return $this->checkable('radio', $name, $value ?? $name, $checked, $attributes);
     }
@@ -357,8 +394,9 @@ class FormBuilder
     /**
      * Build a checkable (checkbox/radio) input.
      */
-    protected function checkable(string $type, string $name, mixed $value, ?bool $checked, array $attributes): HtmlString
+    protected function checkable(string $type, string $name, mixed $value, ?bool $checked, mixed $attributes = []): HtmlString
     {
+        $attributes = is_array($attributes) ? $attributes : [];
         $id = $attributes['id'] ?? $name;
 
         if ($checked === null) {
